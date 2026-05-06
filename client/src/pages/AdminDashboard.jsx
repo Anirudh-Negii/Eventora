@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../utils/axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const AdminDashboard = () => {
     const { user } = useContext(AuthContext);
@@ -45,8 +46,9 @@ const AdminDashboard = () => {
             setShowEventForm(false);
             setFormData({ title: '', description: '', date: '', location: '', category: '', totalSeats: '', ticketPrice: '', image: '' });
             fetchData();
+            toast.success('Event created successfully');
         } catch (error) {
-            alert(error.response?.data?.message || 'Error creating event');
+            toast.error(error.response?.data?.message || 'Error creating event');
         }
     };
 
@@ -55,8 +57,9 @@ const AdminDashboard = () => {
             try {
                 await api.delete(`/events/${id}`);
                 fetchData();
+                toast.success('Event deleted successfully');
             } catch (error) {
-                alert('Error deleting event');
+                toast.error(error.response?.data?.message || 'Error deleting event');
             }
         }
     };
@@ -65,8 +68,9 @@ const AdminDashboard = () => {
         try {
             await api.put(`/bookings/${id}/confirm`, { paymentStatus });
             fetchData();
+            toast.success('Booking confirmed successfully');
         } catch (error) {
-            alert(error.response?.data?.message || 'Error confirming booking');
+            toast.error(error.response?.data?.message || 'Error confirming booking');
         }
     };
 
@@ -75,8 +79,9 @@ const AdminDashboard = () => {
             try {
                 await api.delete(`/bookings/${id}`);
                 fetchData();
+                toast.success('Booking cancelled successfully');
             } catch (error) {
-                alert(error.response?.data?.message || 'Error cancelling booking');
+                toast.error(error.response?.data?.message || 'Error cancelling booking');
             }
         }
     };

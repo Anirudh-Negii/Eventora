@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import api from '../utils/axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaTicketAlt, FaTimesCircle } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const UserDashboard = () => {
     const { user } = useContext(AuthContext);
@@ -34,8 +35,9 @@ const UserDashboard = () => {
             try {
                 await api.delete(`/bookings/${id}`);
                 fetchBookings();
+                toast.success('Booking cancelled successfully');
             } catch (error) {
-                alert(error.response?.data?.message || 'Error cancelling booking');
+                toast.error(error.response?.data?.message || 'Error cancelling booking');
             }
         }
     };
