@@ -2,48 +2,53 @@
 
 Eventora is a full-stack MERN (MongoDB, Express.js, React, Node.js) event booking platform with OTP-based verification, role-based dashboards, and admin-managed booking confirmations.
 
-## 📌 Project Overview
+# Live Demo
 
-Eventora enables users to discover events, request bookings, and track booking status from a personal dashboard, while admins can create/manage events and approve booking requests. The platform includes email-based OTP flows for account verification and booking verification, with MongoDB-backed persistence for users, events, OTPs, and bookings.
+[Eventora — Live Project](https://eventora-bookings.vercel.app)
 
-Screenshots and system documentation (DFD, flowcharts) are available in the `assets/` folder.
+## Project Overview
 
-## ✨ Features
+Eventora allows users to discover events, view event details, submit booking requests with OTP-based verification, and track or cancel their bookings from a personal dashboard. Admins can create and manage events, review booking requests, and confirm or cancel bookings. The platform uses JWT-based authentication, role-based access control, MongoDB-backed persistence, and email-based verification and booking notifications.
+
+## Features
 
 - User registration and login with JWT authentication.
 - Email OTP verification for account activation.
 - Event discovery with search and event detail pages.
 - OTP-based booking request flow for additional verification.
-- User dashboard to view and cancel booking requests.
-- Admin dashboard to create/delete events and manage booking approvals.
+- User dashboard to view, track, and cancel bookings.
+- Admin dashboard to create and delete events and manage booking approvals.
+- Role-based access control for user and admin functionality.
 - Booking states (`pending`, `confirmed`, `cancelled`) and payment states (`paid`, `not_paid`).
-- Automated email notifications for OTP and booking confirmations.
+- Seat availability tracking with automatic updates on bookings and cancellations.
+- Automated email notifications for OTP verification and booking confirmations.
 - Seed script for quick local data setup.
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - Frontend: React, Vite, Tailwind CSS, React Router, Axios, React Icons.
 - Backend: Node.js, Express.js.
 - Database: MongoDB with Mongoose.
 - Authentication/Security: JWT, bcrypt.
-- Email Service: Nodemailer with Gmail SMTP.
+- Email Service: Brevo Transactional Email API.
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 1. React frontend (`client`) handles UI, routing, and authenticated API calls.
-2. Express backend (`server`) exposes REST endpoints for auth, events, and bookings.
+2. Express backend (`server`) exposes REST endpoints for authentication, events, and bookings.
 3. JWT middleware protects private/admin routes and enforces role-based access.
 4. Business logic in controllers validates OTPs, manages booking lifecycle, and updates seat availability.
 5. MongoDB stores application entities (`User`, `Event`, `Booking`, `OTP`).
-6. Nodemailer service sends OTP and booking confirmation emails.
+6. Brevo Transactional Email API handles OTP and booking confirmation emails.
 
 High-level flow:
 
+
 `Frontend (React)` → `REST API (Express)` → `MongoDB (Mongoose)`
 
-`REST API (Express)` → `Email Service (Nodemailer/Gmail SMTP)`
+`REST API (Express)` → `Brevo Transactional Email API` → `Email`
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```text
 Eventora/
@@ -63,31 +68,40 @@ Eventora/
 │   ├── middleware/           # JWT auth and admin guard middleware
 │   ├── models/               # Mongoose models (User, Event, Booking, OTP)
 │   ├── routes/               # API route modules (auth, events, bookings)
-│   ├── utils/email.js        # Email transport + OTP/booking email helpers
+│   ├── utils/email.js        # Email API integration + OTP/booking email helpers
 │   ├── seed.js               # Seed script for demo users/events/bookings
 │   ├── server.js             # Express app bootstrap + DB connection
 │   └── package.json
 └── README.md
 ```
 
-## ⚙️ Environment Setup
+## Environment Setup
 
 Create a `.env` file inside `server/` with:
 
 ```env
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
-EMAIL_USER=your_gmail_address
-EMAIL_PASS=your_gmail_app_password
+EMAIL_USER=your_verified_sender_email
+BREVO_API_KEY=your_brevo_api_key
 JWT_SECRET=your_jwt_secret
 ```
 
+Create a `.env` file inside `client/` with:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+For production, set `VITE_API_URL` to the deployed backend API URL.
+
 Notes:
 
-- `EMAIL_PASS` should be a Gmail App Password, not your primary account password.
+- `BREVO_API_KEY` is used by the backend for transactional email delivery.
+- `VITE_API_URL` configures the frontend API endpoint for different environments.
 - Keep `.env` values private and never commit them to source control.
 
-## 🚀 Local Development Setup
+## Local Development Setup
 
 1. Clone the repository and move into the project root.
 2. Install server dependencies:
@@ -104,7 +118,7 @@ cd ../client
 npm install
 ```
 
-4. Configure environment variables in `server/.env`.
+4. Configure environment variables in `server/.env` and `client/.env`.
 5. Start backend server:
 
 ```bash
@@ -128,11 +142,9 @@ cd server
 npm run seed
 ```
 
-## 🔮 Future Improvements
+## Future Improvements
 
-- Integrate a real payment gateway (e.g., Razorpay/Stripe) for end-to-end online checkout.
-- Add webhook-based payment verification and automatic payment status reconciliation.
-- Move client API base URL to environment variables for multi-environment deployments.
-- Add pagination, advanced filtering, and sorting for event discovery.
-- Introduce unit/integration tests for controllers and critical user flows.
-- Add containerized deployment and CI/CD pipelines for streamlined releases.
+- Integrate a real payment gateway (e.g., Razorpay or Stripe) to automate payment processing instead of manually managing `paid` and `not_paid` statuses.
+- Add pagination, advanced filtering, and sorting to improve event discovery and browsing as the number of events grows.
+- Add automated unit and integration tests for authentication, booking, OTP verification, and critical API flows.
+- Implement automated email reminders and notifications for upcoming events, booking status changes, and cancellations.
