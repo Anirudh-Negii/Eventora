@@ -36,8 +36,6 @@ const sendBookingEmail = async (userEmail, userName, eventTitle) => {
                 }
             }
         );
-
-        console.log('Booking confirmation email sent to', userEmail);
     } catch (error) {
         console.error(
             'Error sending booking email:',
@@ -106,8 +104,6 @@ const sendOTPEmail = async (userEmail, otp, type) => {
                 }
             }
         );
-
-        console.log(`OTP sent to ${userEmail} for ${type}`);
     } catch (error) {
         console.error(
             'Error sending OTP email:',

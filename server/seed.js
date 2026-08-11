@@ -207,12 +207,10 @@ const seedDatabase = async () => {
     await mongoose.connect(
       process.env.MONGO_URI || "mongodb://localhost:27017/eventora",
     );
-    console.log("\n✅ MongoDB connection open...");
 
     await User.deleteMany();
     await Event.deleteMany();
     await Booking.deleteMany();
-    console.log("🗑️  Cleared existing data.");
 
     // Hash user passwords
     const salt = await bcrypt.genSalt(10);
@@ -225,7 +223,6 @@ const seedDatabase = async () => {
     const createdUsers = await User.insertMany(hashedUsers);
     const adminUser = createdUsers.find((u) => u.role === "admin");
     const normalUsers = createdUsers.filter((u) => u.role === "user");
-    console.log(`👤 Created ${createdUsers.length} total dummy users.`);
 
     // Link events to admin
     const eventsWithAdmin = events.map((e) => ({
@@ -276,19 +273,9 @@ const seedDatabase = async () => {
     }
 
     await Booking.insertMany(bookingsData);
-    console.log(
-      `🎫 Inserted ${bookingsData.length} randomized dummy bookings (confirmed, pending, cancelled, paid, not_paid).`,
-    );
-    console.log("\n🚀 Database seeded successfully!");
-    console.log("-------------------------------------------");
-    console.log("Admin Email: admin@eventora.com");
-    console.log("User Email:  user@eventora.com");
-    console.log("Password for all users: password123");
-    console.log("-------------------------------------------\n");
-
     process.exit();
   } catch (error) {
-    console.error("❌ Error seeding data:", error);
+    console.error("Error seeding data:", error);
     process.exit(1);
   }
 };
